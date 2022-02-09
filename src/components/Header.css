@@ -6,7 +6,7 @@
 .headerlink-title {
     color: #98878F;
     text-decoration: none;
-
+    font-size: 19px;
     padding: 0 10px;
     display: inline-block;
     position: relative;
@@ -34,7 +34,7 @@
 .active{
     color: #985E6D;
     text-decoration: none;
-
+    font-size: 19px;
     padding: 0 10px;
     display: inline-block;
     position: relative;
