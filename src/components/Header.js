@@ -8,11 +8,8 @@ const HeaderLink = ({ page, selected }) => {
   className += 'headerlink-title';
 
   return (
-    <Link to={`/${page}`} className={className}>
+    <Link to={`/${page}`} className={selected ? 'active' : className}>
       {title}
-      <div className={selected ? 'headerlink-dot-active' : 'headerlink-dot'}>
-        •
-      </div>
     </Link>
   );
 };
@@ -22,10 +19,10 @@ const Header = () => {
 
   return (
     <div className='header'>
-      <HeaderLink page='home' selected={page === 'home'} />
-      <HeaderLink page='code' selected={page === 'code'} />
-      <HeaderLink page='standings' selected={page === 'standings'} />
-      <HeaderLink page='contact' selected={page === 'contact'} />
+      <HeaderLink page='home/' selected={page === 'home'} />
+      <HeaderLink page='code/' selected={page === 'code'} />
+      <HeaderLink page='standings/' selected={page === 'standings'} />
+      <HeaderLink page='contact/' selected={page === 'contact'} />
     </div>
   );
 };
