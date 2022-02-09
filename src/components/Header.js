@@ -23,6 +23,7 @@ const Header = () => {
       <HeaderLink page='code/' selected={page === 'code'} />
       <HeaderLink page='standings/' selected={page === 'standings'} />
       <HeaderLink page='contact/' selected={page === 'contact'} />
+      
     </div>
   );
 };
