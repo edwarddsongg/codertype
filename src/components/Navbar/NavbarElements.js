@@ -22,7 +22,6 @@ export const NavLink = styled(Link)`
   &.active {
     color: #c724b7;
   }
-  &.hov
 `;
   
 export const Bars = styled(FaBars)`

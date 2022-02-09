@@ -14,19 +14,18 @@ const NavBar = () => {
         <>
             <Nav>
                 <Bars />
-
                 <NavMenu>
                     <NavMenu>
                         <NavLink to='/code' activeStyle>
                             Code
                         </NavLink>
-                        <NavLink class = "nav_hover" to='/standings' activeStyle>
+                        <NavLink to='/standings' activeStyle>
                             Standings
                         </NavLink>
-                        <NavLink class = "nav_hover" to='/contact' activeStyle>
+                        <NavLink  to='/contact' activeStyle>
                             Contact
                         </NavLink>
-                        <NavLink class = "nav_hover" to='/sign-up' activeStyle>
+                        <NavLink  to='/sign-up' activeStyle>
                             Sign Up
                         </NavLink>
                         {/* Second Nav */}
