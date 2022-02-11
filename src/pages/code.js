@@ -1,168 +1,242 @@
-import {useState, useEffect, useRef} from 'react'
-import randomWords from 'random-words'
-const NUMB_OF_WORDS = 200
-const SECONDS = 60
+import React, { Component } from "react";
+import "./code_css/code.css";
 
-function Code() {
-  const [words, setWords] = useState([])
-  const [countDown, setCountDown] = useState(SECONDS)
-  const [currInput, setCurrInput] = useState("")
-  const [currWordIndex, setCurrWordIndex] = useState(0)
-  const [currCharIndex, setCurrCharIndex] = useState(-1)
-  const [currChar, setCurrChar] = useState("")
-  const [correct, setCorrect] = useState(0)
-  const [incorrect, setIncorrect] = useState(0)
-  const [status, setStatus] = useState("waiting")
-  const textInput = useRef(null)
+class App extends Component {
+  state = {
+    text: "",
+    inputValue: "",
+    lastLetter: "",
+    words: [],
+    completedWords: [],
+    completed: false,
+    startTime: undefined,
+    timeElapsed: 0,
+    wpm: 0,
+    started: false,
+    progress: 0
+  };
 
-  useEffect(() => {
-    setWords(generateWords())
-  }, [])
+  setText = () => {
+    const texts = [
+      `You never read a book on psychology, Tippy. You didn't need to. You knew by some divine instinct that you can make more friends in two months by becoming genuinely interested in other people than you can in two years by trying to get other people interested in you.`,
+      `I know more about the private lives of celebrities than I do about any governmental policy that will actually affect me. I'm interested in things that are none of my business, and I'm bored by things that are important to know.`,
+      `A spider's body consists of two main parts: an anterior portion, the prosoma (or cephalothorax), and a posterior part, the opisthosoma (or abdomen).`,
+      `As customers of all races, nationalities, and cultures visit the Dekalb Farmers Market by the thousands, I doubt that many stand in awe and contemplate the meaning of its existence. But in the capital of the Sunbelt South, the quiet revolution of immigration and food continues to upset and redefine the meanings of local, regional, and global identity.`,
+      `Outside of two men on a train platform there's nothing in sight. They're waiting for spring to come, smoking down the track. The world could come to an end tonight, but that's alright. She could still be there sleeping when I get back.`,
+      `I'm a broke-nose fighter. I'm a loose-lipped liar. Searching for the edge of darkness. But all I get is just tired. I went looking for attention. In all the wrong places. I was needing a redemption. And all I got was just cages.`
+    ];
+    const text = texts[Math.floor(Math.random() * texts.length)];
+    const words = text.split(" ");
 
-  useEffect(() => {
-    if (status === 'started') {
-      textInput.current.focus()
-    }
-  }, [status])
+    this.setState({
+      text: text,
+      words: words,
+      completedWords: []
+    });
+  };
 
-  function generateWords() {
-    return new Array(NUMB_OF_WORDS).fill(null).map(() => randomWords())
-  }
+  startGame = () => {
+    this.setText();
 
-  function start() {
+    this.setState({
+      started: true,
+      startTime: Date.now(),
+      completed: false,
+      progress: 0
+    });
+  };
 
-    if (status === 'finished') {
-      setWords(generateWords())
-      setCurrWordIndex(0)
-      setCorrect(0)
-      setIncorrect(0)
-      setCurrCharIndex(-1)
-      setCurrChar("")
-    }
+  handleChange = e => {
+    const { words, completedWords } = this.state;
+    const inputValue = e.target.value;
+    const lastLetter = inputValue[inputValue.length - 1];
 
-    if (status !== 'started') {
-      setStatus('started')
-      let interval = setInterval(() => {
-        setCountDown((prevCountdown) => {
-          if (prevCountdown === 0) {
-            clearInterval(interval)
-            setStatus('finished')
-            setCurrInput("")
-            return SECONDS
-          } else {
-            return prevCountdown - 1
-          }
-        }  )
-      } ,  1000 )
-    }
-    
-  }
+    const currentWord = words[0];
+    console.log(currentWord, "currentWord");
 
-  function handleKeyDown({keyCode, key}) {
-    // space bar 
-    if (keyCode === 32) {
-      checkMatch()
-      setCurrInput("")
-      setCurrWordIndex(currWordIndex + 1)
-      setCurrCharIndex(-1)
-    // backspace
-    } else if (keyCode === 8) {
-      setCurrCharIndex(currCharIndex - 1)
-      setCurrChar("")
-    } else {
-      setCurrCharIndex(currCharIndex + 1)
-      setCurrChar(key)
-    }
-  }
+    // if space or '.', check the word
+    if (lastLetter === " " || lastLetter === ".") {
+      // check to see if it matches to the currentWord
+      // trim because it has the space
+      if (inputValue.trim() === currentWord) {
+        // remove the word from the wordsArray
+        // cleanUp the input
+        const newWords = [...words.slice(1)];
+        console.log(newWords, "newWords");
+        console.log(newWords.length, "newWords.length");
+        const newCompletedWords = [...completedWords, currentWord];
+        console.log(newCompletedWords, "newCompletedWords");
+        console.log("----------------");
 
-  function checkMatch() {
-    const wordToCompare = words[currWordIndex]
-    const doesItMatch = wordToCompare === currInput.trim()
-    if (doesItMatch) {
-      setCorrect(correct + 1)
-    } else {
-      setIncorrect(incorrect + 1)
-    }
-  }
-
-  function getCharClass(wordIdx, charIdx, char) {
-    if (wordIdx === currWordIndex && charIdx === currCharIndex && currChar && status !== 'finished') {
-      if (char === currChar) {
-        return 'has-background-success'
-      } else {
-        return 'has-background-danger'
+        // Get the total progress by checking how much words are left
+        const progress =
+          (newCompletedWords.length /
+            (newWords.length + newCompletedWords.length)) *
+          100;
+        this.setState({
+          words: newWords,
+          completedWords: newCompletedWords,
+          inputValue: "",
+          completed: newWords.length === 0,
+          progress: progress
+        });
       }
-    } else if (wordIdx === currWordIndex && currCharIndex >= words[currWordIndex].length) {
-      return 'has-background-danger'
     } else {
-      return ''
+      this.setState({
+        inputValue: inputValue,
+        lastLetter: lastLetter
+      });
+      console.log(this.state.inputValue, "this.state.inputValue");
+      console.log(this.state.lastLetter, "this.state.lastLetter");
+      console.log("================================");
     }
+
+    this.calculateWPM();
+  };
+
+  calculateWPM = () => {
+    const { startTime, completedWords } = this.state;
+    const now = Date.now();
+    const diff = (now - startTime) / 1000 / 60; // 1000 ms / 60 s
+    console.log(now, "now");
+    console.log(startTime, "startTime");
+    console.log(diff, "diff");
+    console.log("**************");
+
+    // every word is considered to have 5 letters
+    // so here we are getting all the letters in the words and divide them by 5
+    // "my" shouldn't be counted as same as "deinstitutionalization"
+    const wordsTyped = Math.ceil(
+      completedWords.reduce((acc, word) => (acc += word.length), 0) / 5
+    );
+    console.log(completedWords, "completedWords");
+    console.log(wordsTyped, "wordsTyped");
+    console.log("+=+=+=+=+=+=");
+
+    // calculating the wpm
+    const wpm = Math.ceil(wordsTyped / diff);
+
+    this.setState({
+      wpm: wpm,
+      timeElapsed: diff
+    });
+  };
+
+  render() {
+    const {
+      text,
+      inputValue,
+      completedWords,
+      wpm,
+      timeElapsed,
+      started,
+      completed,
+      progress
+    } = this.state;
+
+    if (!started)
+      return (
+        <div className="container">
+          <h2>Welcome to the Typing game</h2>
+          <p>
+            <strong>Rules:</strong> <br />
+            Type in the input field the highlighted word. <br />
+            The correct words will turn <span className="green">green</span>.
+            <br />
+            Incorrect letters will turn <span className="red">red</span>.
+            <br />
+            <br />
+            Have fun!
+          </p>
+          <button className="start-btn" onClick={this.startGame}>
+            Start game
+          </button>
+        </div>
+      );
+
+    if (!text) return <p>Loading...</p>;
+
+    if (completed) {
+      return (
+        <div className="container">
+          <h2>
+            Your WPM is <strong>{wpm}</strong>
+          </h2>
+          <button className="start-btn" onClick={this.startGame}>
+            Play again
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        <div className="wpm">
+          <strong>WPM: </strong>
+          {wpm}
+          <br />
+          <strong>Time: </strong>
+          {Math.floor(timeElapsed * 60)}s
+        </div>
+        <div className="container">
+          <h4>Type the text below</h4>
+          <progress value={progress} max="100" />
+          <p className="text">
+            {text.split(" ").map((word, w_idx) => {
+              let highlight = false;
+              let currentWord = false;
+
+              // this means that the word is completed, so turn it green
+              if (completedWords.length > w_idx) {
+                highlight = true;
+              }
+
+              if (completedWords.length === w_idx) {
+                currentWord = true;
+              }
+
+              return (
+                <span
+                  className={`word 
+                                ${highlight && "green"} 
+                                ${currentWord && "underline"}`}
+                  key={w_idx}
+                >
+                  {word.split("").map((letter, l_idx) => {
+                    const isCurrentWord = w_idx === completedWords.length;
+                    const isWronglyTyped = letter !== inputValue[l_idx];
+                    const shouldBeHighlighted = l_idx < inputValue.length;
+
+                    return (
+                      <span
+                        className={`letter ${
+                          isCurrentWord && shouldBeHighlighted
+                            ? isWronglyTyped
+                              ? "red"
+                              : "green"
+                            : ""
+                        }`}
+                        key={l_idx}
+                      >
+                        {letter}
+                      </span>
+                    );
+                  })}
+                </span>
+              );
+            })}
+          </p>
+          <input
+            type="text"
+            onChange={this.handleChange}
+            value={inputValue}
+            // autoFocus={started ? 'true' : 'false'}
+            autoFocus={true}
+          />
+        </div>
+      </div>
+    );
   }
-
-
-  return (
-    <div className="test" style={{
-      height: '100vh'
-    }}>
-      <div className="section">
-        <div className="is-size-1 has-text-centered has-text-primary">
-          <h2>{countDown}</h2>
-        </div>
-      </div>
-      <div className="control is-expanded section">
-        <input ref={textInput} disabled={status !== "started"} type="text" className="input" onKeyDown={handleKeyDown} value={currInput} onChange={(e) => setCurrInput(e.target.value)}  />
-      </div>
-      <div className="section">
-        <button className="button is-info is-fullwidth" onClick={start}>
-          Start
-        </button>
-      </div>
-      {status === 'started' && (
-        <div className="section" >
-          <div className="card">
-            <div className="card-content">
-              <div className="content">
-                {words.map((word, i) => (
-                  <span key={i}>
-                    <span>
-                      {word.split("").map((char, idx) => (
-                        
-                        <span className={getCharClass(i, idx, char)} key={idx}>{char}</span>
-                      )) }
-                    </span>
-                    <span> </span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      {status === 'finished' && (
-        <div className="section">
-          <div className="columns">
-            <div className="column has-text-centered">
-              <p className="is-size-5">Words per minute:</p>
-              <p className="has-text-primary is-size-1">
-                {correct}
-              </p>
-            </div>
-            <div className="column has-text-centered">
-              <p className="is-size-5">Accuracy:</p>
-              {correct !== 0 ? (
-                <p className="has-text-info is-size-1">
-                  {Math.round((correct / (correct + incorrect)) * 100)}%
-                </p>
-              ) : (
-                <p className="has-text-info is-size-1">0%</p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-    </div>
-  );
 }
 
-export default Code;
+export default App;
