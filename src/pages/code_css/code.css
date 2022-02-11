@@ -28,8 +28,7 @@ p {
 }
 
 .container {
-    box-shadow: 0 4px 15px -5px rgba(0, 0, 0, 0.7);
-    border: 2px solid #000;
+    
     padding: 30px;
     width: 650px;
     max-width: 100%;
@@ -38,7 +37,7 @@ p {
     justify-content: center;
     align-items: center;
     text-align: center;
-    min-height: 100vh;
+    min-height: 80vh;
 }
 
 .container .text {

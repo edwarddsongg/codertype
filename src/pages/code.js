@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./code_css/code.css";
+import Timer from './timers/timers'
 
 class Code extends Component {
   state = {
@@ -45,6 +46,12 @@ class Code extends Component {
       progress: 0
     });
   };
+
+  restartGame = () => {
+    this.setState({
+      completed: true
+    });
+  }
 
   handleChange = e => {
     const { words, completedWords } = this.state;
@@ -183,6 +190,7 @@ class Code extends Component {
           {Math.floor(timeElapsed * 60)}s
         </div>
         <div className="container">
+          
           <h4>Type the text below</h4>
           <progress value={progress} max="100" />
           <p className="text">
