@@ -14,11 +14,12 @@ function App() {
       <Router>
         <Route path='/:page' component={Header} />
         <Route exact path='/' component={Header} />
-        <Route exact path='/home'  component={Home} />
+        <Route exact path='/'  component={Home} />
+        <Route exact path='/home' component={Home} />
         <Route exact path='/code' component={Code} />
         <Route exact path='/standings' component={Standings} />
         <Route exact path='/contact' component={Contact} />
-        <Route exact path='/sign-up' component={SignUp} />
+        <Route exact path='/signup' component={SignUp} />
       </Router>
     </div>
   );

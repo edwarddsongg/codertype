@@ -1,4 +1,8 @@
 import { Link, useParams } from 'react-router-dom';
+import {
+    NavBtn,
+    NavBtnLink
+} from './nav_components'
 
 import './Header.css';
 
@@ -23,7 +27,9 @@ const Header = () => {
       <HeaderLink page='code/' selected={page === 'code'} />
       <HeaderLink page='standings/' selected={page === 'standings'} />
       <HeaderLink page='contact/' selected={page === 'contact'} />
-      
+      <NavBtn>
+          <NavBtnLink to='/signup'>Sign In</NavBtnLink>
+        </NavBtn>
     </div>
   );
 };
