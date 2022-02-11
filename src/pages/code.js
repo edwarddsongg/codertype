@@ -5,21 +5,24 @@ import Timer from './timers/timers'
 class Example extends React.Component {
   constructor() {
     super();
-    this.state = { time: {}, seconds: 5 };
+    this.state = {
+       time: {}, 
+       seconds: 5,
+       text: "",
+       inputValue:"",
+       lastLetter:"",
+       words:[],
+       completedWords:[],
+       completed:false,
+       startTime:undefined,
+       timeElapsed:0,
+       wpm:0,
+       started: false,
+       thisprogress: 0};
     this.timer = 0;
     this.startTimer = this.startTimer.bind(this);
     this.countDown = this.countDown.bind(this);
-    this.text= "";
-    this.inputValue= "";
-    this.lastLetter= "";
-    this.words= [];
-    this.completedWords= [];
-    this.completed =false;
-    this.startTime= undefined;
-    this.timeElapsed= 0;
-    this.wpm= 0;
-    this.started= false;
-    this.progress= 0;
+    
   }
 
   setText = () => {
