@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./code_css/code.css";
 
-class App extends Component {
+class Code extends Component {
   state = {
     text: "",
     inputValue: "",
@@ -136,7 +136,10 @@ class App extends Component {
 
     if (!started)
       return (
-        <div className="container">
+        <div style={{
+          height: '100vh'
+        }}>
+          <div className = "container">
           <h2>Welcome to the Typing game</h2>
           <p>
             <strong>Rules:</strong> <br />
@@ -151,6 +154,7 @@ class App extends Component {
           <button className="start-btn" onClick={this.startGame}>
             Start game
           </button>
+          </div>
         </div>
       );
 
@@ -239,4 +243,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default Code;
