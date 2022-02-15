@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./code_css/code.css";
 import Timer from './timers/timers'
+import randomWords from 'random-words'
 
 class Example extends Component {
   constructor(props) {
@@ -8,6 +9,7 @@ class Example extends Component {
     this.state = {
        time: {}, 
        seconds: 0,
+       change_sec:0,
        text: "",
        inputValue:"",
        lastLetter:"",
@@ -26,16 +28,9 @@ class Example extends Component {
   }
 
   setText = () => {
-    const texts = [
-      `You never read a book on psychology, Tippy. You didn't need to. You knew by some divine instinct that you can make more friends in two months by becoming genuinely interested in other people than you can in two years by trying to get other people interested in you.`,
-      `I know more about the private lives of celebrities than I do about any governmental policy that will actually affect me. I'm interested in things that are none of my business, and I'm bored by things that are important to know.`,
-      `A spider's body consists of two main parts: an anterior portion, the prosoma (or cephalothorax), and a posterior part, the opisthosoma (or abdomen).`,
-      `As customers of all races, nationalities, and cultures visit the Dekalb Farmers Market by the thousands, I doubt that many stand in awe and contemplate the meaning of its existence. But in the capital of the Sunbelt South, the quiet revolution of immigration and food continues to upset and redefine the meanings of local, regional, and global identity.`,
-      `Outside of two men on a train platform there's nothing in sight. They're waiting for spring to come, smoking down the track. The world could come to an end tonight, but that's alright. She could still be there sleeping when I get back.`,
-      `I'm a broke-nose fighter. I'm a loose-lipped liar. Searching for the edge of darkness. But all I get is just tired. I went looking for attention. In all the wrong places. I was needing a redemption. And all I got was just cages.`
-    ];
-    const text = texts[Math.floor(Math.random() * texts.length)];
-    const words = text.split(" ");
+   
+    const text = Array(100).fill(null).map(() => randomWords())
+    const words =  text
 
     this.setState({
       text: text,
@@ -51,7 +46,7 @@ class Example extends Component {
     let minutes = Math.floor(divisor_for_minutes / 60);
 
     let divisor_for_seconds = divisor_for_minutes % 60;
-    let seconds = Math.ceil(divisor_for_seconds);
+    let seconds = secs;
 
     let obj = {
       "h": hours,
@@ -61,16 +56,46 @@ class Example extends Component {
     return obj;
   }
 
+
   componentDidMount() {
     let timeLeftVar = this.secondsToTime(this.state.seconds);
     this.setState({ time: timeLeftVar });
   }
 
+
+  set30() {
+    this.setState = ({
+      change_sec:30
+    });
+    this.startTimer();
+  }
+  set60() {
+    this.setState = ({
+      change_sec:60
+    });
+    this.startTimer();
+  }
+  set90() {
+    this.setState = ({
+      change_sec: 90
+    })
+    this.startTimer();
+  }
+
     startTimer() {
-    this.started = true;
-    this.state.seconds = 5;
-    this.componentDidMount();
-    this.timer = 0;
+   
+      this.setState({
+        started: true,
+        startTime: Date.now(),
+        seconds: 400,
+        timer: 0
+      });
+      this.state.seconds = 400;
+      this.componentDidMount();
+
+      this.started = true;
+    
+    
     
     if (this.timer == 0 && this.state.seconds > 0) {
       
@@ -102,9 +127,6 @@ class Example extends Component {
       clearInterval(this.timer);
     }
   }
-
-  
-
 
   handleChange = e => {
     const { words, completedWords } = this.state;
@@ -163,10 +185,7 @@ class Example extends Component {
         console.log(this.state.completed);
         console.log('why');
       }
-      console.log(this.state.seconds);
-      //console.log(this.state.inputValue, "this.state.inputValue");
-      //console.log(this.state.lastLetter, "this.state.lastLetter");
-      //console.log("================================");
+    
     }
 
     this.calculateWPM();
@@ -176,22 +195,11 @@ class Example extends Component {
     const { startTime, completedWords } = this.state;
     const now = Date.now();
     const diff = (now - startTime) / 1000 / 60; // 1000 ms / 60 s
-    //console.log(now, "now");
-   // console.log(startTime, "startTime");
-    //console.log(diff, "diff");
-    //console.log("**************");
-
-    // every word is considered to have 5 letters
-    // so here we are getting all the letters in the words and divide them by 5
-    // "my" shouldn't be counted as same as "deinstitutionalization"
+  
     const wordsTyped = Math.ceil(
       completedWords.reduce((acc, word) => (acc += word.length), 0) / 5
     );
-    //console.log(completedWords, "completedWords");
-    //console.log(wordsTyped, "wordsTyped");
-    //console.log("+=+=+=+=+=+=");
-
-    // calculating the wpm
+   
     const wpm = Math.ceil(wordsTyped / diff);
 
     this.setState({
@@ -253,10 +261,18 @@ class Example extends Component {
         </div>
         <div className="container">
         {this.state.time.s}
-          <h4>Type the text below</h4>
+        <button className="start-btn" onClick={this.set30}>
+            30
+          </button>
+          <button className="start-btn" onClick={this.set60}>
+            60
+          </button>
+          <button className="start-btn" onClick={this.set}>
+            90
+          </button>
           <progress value={progress} max="100" />
           <p className="text">
-            {text.split(" ").map((word, w_idx) => {
+            {this.state.text.map((word, w_idx) => {
               let highlight = false;
               let currentWord = false;
 
