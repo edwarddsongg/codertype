@@ -65,9 +65,10 @@ class Example extends Component {
 
   set30() {
     this.setState = ({
-      change_sec:30
+      change_sec:30,
+      seconds: 30
     });
-    this.startTimer();
+    this.componentDidMount();
   }
   set60() {
     this.setState = ({
@@ -82,15 +83,15 @@ class Example extends Component {
     this.startTimer();
   }
 
-    startTimer() {
+    startTimer = (time) => {
    
       this.setState({
         started: true,
         startTime: Date.now(),
-        seconds: 400,
+        seconds: time,
         timer: 0
       });
-      this.state.seconds = 400;
+      this.state.seconds = time;
       this.componentDidMount();
 
       this.started = true;
@@ -226,7 +227,7 @@ class Example extends Component {
           height: '100vh'
         }}>
           <div className = "container">
-          <button className="start-btn" onClick={this.startTimer}>
+          <button className="start-btn" onClick={() => this.startTimer(30)}>
             Start game
           </button>
 
@@ -242,7 +243,7 @@ class Example extends Component {
           <h2>
             Your WPM is <strong>{wpm}</strong>
           </h2>
-          <button className="start-btn" onClick={this.startTimer}>
+          <button className="start-btn" onClick={() => this.startTimer(30)}>
             Play again
           </button>
         </div>
@@ -261,13 +262,13 @@ class Example extends Component {
         </div>
         <div className="container">
         {this.state.time.s}
-        <button className="start-btn" onClick={this.set30}>
+        <button className="start-btn" onClick={() => this.startTimer(30)}>
             30
           </button>
-          <button className="start-btn" onClick={this.set60}>
+          <button className="start-btn" onClick={() => this.startTimer(60)}>
             60
           </button>
-          <button className="start-btn" onClick={this.set}>
+          <button className="start-btn" onClick={() => this.startTimer(90)}>
             90
           </button>
           <progress value={progress} max="100" />
