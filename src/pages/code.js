@@ -7,50 +7,52 @@ class Example extends Component {
   constructor(props) {
     super(props);
     this.state = {
-       time: {}, 
-       seconds: 0,
-       change_sec:0,
-       text: "",
-       inputValue:"",
-       lastLetter:"",
-       words:[],
-       completedWords:[],
-       completed:false,
-       startTime:undefined,
-       timeElapsed:0,
-       wpm:0,
-       started: false,
-       thisprogress: 0};
+      time: {},
+      seconds: 0,
+      text: "",
+      inputValue: "",
+      lastLetter: "",
+      words: [],
+      completedWords: [],
+      completed: false,
+      startTime: undefined,
+      timeElapsed: 0,
+      wpm: 0,
+      started: false,
+      thisprogress: 0,
+      press_toggle: false
+    };
     this.timer = 0;
     this.startTimer = this.startTimer.bind(this);
+
     this.countDown = this.countDown.bind(this);
-    
+
   }
 
   setText = () => {
-   
+
     const text = Array(100).fill(null).map(() => randomWords())
-    const words =  text
+    const words = text
 
     this.setState({
       text: text,
       words: words,
       completedWords: []
     });
+
+    this.setState({
+      started: true,
+      startTime: Date.now(),
+      completed: false,
+      progress: 0
+    });
   };
 
-  secondsToTime(secs){
-    let hours = Math.floor(secs / (60 * 60));
+  secondsToTime(secs) {
 
-    let divisor_for_minutes = secs % (60 * 60);
-    let minutes = Math.floor(divisor_for_minutes / 60);
-
-    let divisor_for_seconds = divisor_for_minutes % 60;
     let seconds = secs;
 
     let obj = {
-      "h": hours,
-      "m": minutes,
       "s": seconds
     };
     return obj;
@@ -60,51 +62,32 @@ class Example extends Component {
   componentDidMount() {
     let timeLeftVar = this.secondsToTime(this.state.seconds);
     this.setState({ time: timeLeftVar });
+
   }
 
 
-  set30() {
-    this.setState = ({
-      change_sec:30,
-      seconds: 30
+
+  startTimer = (time) => {
+
+    this.setState({
+      started: true,
+      startTime: Date.now(),
+      seconds: time,
+      timer: 0,
+      completed: false
     });
+    this.state.seconds = time;
+
     this.componentDidMount();
-  }
-  set60() {
-    this.setState = ({
-      change_sec:60
-    });
-    this.startTimer();
-  }
-  set90() {
-    this.setState = ({
-      change_sec: 90
-    })
-    this.startTimer();
-  }
 
-    startTimer = (time) => {
-   
-      this.setState({
-        started: true,
-        startTime: Date.now(),
-        seconds: time,
-        timer: 0
-      });
-      this.state.seconds = time;
-      this.componentDidMount();
-
-      this.started = true;
-    
-    
-    
+    console.log(this.timer, this.state.seconds);
     if (this.timer == 0 && this.state.seconds > 0) {
-      
+
       this.timer = setInterval(this.countDown, 1000);
       console.log(this.timer);
-    } 
+    }
 
-    this.setText();
+    //this.setText();
 
     this.setState({
       started: true,
@@ -113,23 +96,68 @@ class Example extends Component {
       progress: 0
     });
 
+
   }
+
+  setTime = (time) => {
+    console.log(time)
+    this.setState({
+      started: true,
+      startTime: Date.now(),
+      seconds: time,
+      timer: 0,
+      completed: false,
+      press_toggle: false,
+      inputValue: ""
+    });
+
+    this.state.seconds = time
+    this.setText();
+    this.secondsToTime(time)
+    this.componentDidMount()
+  }
+
 
   countDown() {
     // Remove one second, set state so a re-render happens.
     let seconds = this.state.seconds - 1;
-    this.setState({
-      time: this.secondsToTime(seconds),
-      seconds: seconds,
-    });
-    
+    if (this.state.press_toggle) {
+      
+      this.setState({
+        time: this.secondsToTime(seconds),
+        seconds: seconds,
+      });
+
+    }
     // Check if we're at zero.
-    if (seconds == 0) { 
+    if (seconds == 0) {
+
       clearInterval(this.timer);
+      this.timer = 0;
+      this.setState({
+        completed: true,
+        inputValue: "",
+        // completed: newWords.length === 0,
+        press_toggle: false
+      });
     }
   }
 
+  onPress(e) {
+    console.log(this)
+  }
+
   handleChange = e => {
+    console.log(this)
+    if (this.state.press_toggle == false) {
+      console.log('hi');
+      this.setState({
+        press_toggle: true
+      });
+      this.startTimer(this.state.seconds);
+    }
+
+
     const { words, completedWords } = this.state;
     const inputValue = e.target.value;
     const lastLetter = inputValue[inputValue.length - 1];
@@ -165,28 +193,41 @@ class Example extends Component {
           progress: progress
         });
         console.log(this.state.seconds);
-        
+
+        if (this.state.seconds == 0) {
+          this.setState({
+            completed: true,
+
+            inputValue: "",
+            // completed: newWords.length === 0,
+
+          });
+
+          console.log(this.state.completed);
+          console.log('why');
+        }
+
       }
     } else {
       this.setState({
         inputValue: inputValue,
         lastLetter: lastLetter
-        
+
       });
 
-      if(this.state.seconds == 0) {
+      if (this.state.seconds == 0) {
         this.setState({
-          completed:true,
-          
+          completed: true,
+          timer: 0,
           inputValue: "",
           // completed: newWords.length === 0,
-         
+
         });
-        
+
         console.log(this.state.completed);
         console.log('why');
       }
-    
+
     }
 
     this.calculateWPM();
@@ -196,11 +237,11 @@ class Example extends Component {
     const { startTime, completedWords } = this.state;
     const now = Date.now();
     const diff = (now - startTime) / 1000 / 60; // 1000 ms / 60 s
-  
+
     const wordsTyped = Math.ceil(
       completedWords.reduce((acc, word) => (acc += word.length), 0) / 5
     );
-   
+
     const wpm = Math.ceil(wordsTyped / diff);
 
     this.setState({
@@ -222,14 +263,15 @@ class Example extends Component {
     } = this.state;
 
     if (!started)
+
       return (
         <div style={{
           height: '100vh'
         }}>
-          <div className = "container">
-          <button className="start-btn" onClick={() => this.startTimer(30)}>
-            Start game
-          </button>
+          <div className="container">
+            <button className="start-btn" onClick={() => this.setTime(30)}>
+              Start game
+            </button>
 
           </div>
         </div>
@@ -243,7 +285,7 @@ class Example extends Component {
           <h2>
             Your WPM is <strong>{wpm}</strong>
           </h2>
-          <button className="start-btn" onClick={() => this.startTimer(30)}>
+          <button className="start-btn" onClick={() => this.setTime(30)}>
             Play again
           </button>
         </div>
@@ -260,9 +302,10 @@ class Example extends Component {
           <strong>Time: </strong>
           {Math.floor(timeElapsed * 60)}s
         </div>
-        <div className="container">
-        {this.state.time.s}
-        <button className="start-btn" onClick={() => this.startTimer(30)}>
+        <div className="container" tabindex="0" onClick={() => this.test(30)}>
+          {this.state.time.s}
+
+          {/* <button className="start-btn" onClick={() => this.test(30)}>
             30
           </button>
           <button className="start-btn" onClick={() => this.startTimer(60)}>
@@ -270,6 +313,17 @@ class Example extends Component {
           </button>
           <button className="start-btn" onClick={() => this.startTimer(90)}>
             90
+          </button> */}
+
+          <button className="start-btn" onClick={() => this.setTime(30)}>
+            30Fix
+          </button>
+
+          <button className="start-btn" onClick={() => this.setTime(60)}>
+            60Fix
+          </button>
+          <button className="start-btn" onClick={() => this.setTime(90)}>
+            90Fix
           </button>
           <progress value={progress} max="100" />
           <p className="text">
@@ -300,13 +354,12 @@ class Example extends Component {
 
                     return (
                       <span
-                        className={`letter ${
-                          isCurrentWord && shouldBeHighlighted
-                            ? isWronglyTyped
-                              ? "red"
-                              : "green"
-                            : ""
-                        }`}
+                        className={`letter ${isCurrentWord && shouldBeHighlighted
+                          ? isWronglyTyped
+                            ? "red"
+                            : "green"
+                          : ""
+                          }`}
                         key={l_idx}
                       >
                         {letter}

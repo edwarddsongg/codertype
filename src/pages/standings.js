@@ -1,20 +1,17 @@
+import React, { useEffect } from 'react';
+const App = () => {
+  useEffect(() => {
+    const handleEsc = (event) => {
+       if (event.keyCode === 27) {
+        console.log('Close')
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, []);
+  return(<p><input /></p>);
+}
 
-import React from 'react';
-  
-const Standings = () => {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'Right',
-        alignItems: 'Right',
-        height: '100vh'
-      }}
-    >
-      <h1>Sign Up</h1>
-      
-    </div>
-  );
-};
-  
-export default Standings;
+export default App;
