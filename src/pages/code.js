@@ -297,7 +297,7 @@ class Example extends Component {
           <strong>Time: </strong>
           {Math.floor(timeElapsed * 60)}s
         </div>
-        <div className="container" tabindex="0"  onKeyDown = {this.onPress}>
+        <div className="container" tabindex="0"  onClick = {() => this.test(30)}>
           {this.state.time.s}
 
           <button className="start-btn" onClick={() => this.test(30)}>
