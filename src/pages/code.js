@@ -24,7 +24,7 @@ class Example extends Component {
     };
     this.timer = 0;
     this.startTimer = this.startTimer.bind(this);
-    
+
     this.countDown = this.countDown.bind(this);
 
   }
@@ -39,10 +39,17 @@ class Example extends Component {
       words: words,
       completedWords: []
     });
+
+    this.setState({
+      started: true,
+      startTime: Date.now(),
+      completed: false,
+      progress: 0
+    });
   };
 
   secondsToTime(secs) {
-  
+
     let seconds = secs;
 
     let obj = {
@@ -55,10 +62,10 @@ class Example extends Component {
   componentDidMount() {
     let timeLeftVar = this.secondsToTime(this.state.seconds);
     this.setState({ time: timeLeftVar });
-    
+
   }
 
-  
+
 
   startTimer = (time) => {
 
@@ -70,9 +77,9 @@ class Example extends Component {
       completed: false
     });
     this.state.seconds = time;
-    
+
     this.componentDidMount();
-  
+
     console.log(this.timer, this.state.seconds);
     if (this.timer == 0 && this.state.seconds > 0) {
 
@@ -89,10 +96,11 @@ class Example extends Component {
       progress: 0
     });
 
-    
+
   }
 
   setTime = (time) => {
+    console.log(time)
     this.setState({
       started: true,
       startTime: Date.now(),
@@ -101,6 +109,7 @@ class Example extends Component {
       completed: false,
       press_toggle: false
     });
+    this.state.seconds = time
     this.setText();
     this.secondsToTime(time)
     this.componentDidMount()
@@ -129,16 +138,18 @@ class Example extends Component {
     }
   }
 
-  
+  onPress(e) {
+    console.log(this)
+  }
 
   handleChange = e => {
-    console.log(this.press_toggle)
-    if(this.state.press_toggle == false) {
+    console.log(this)
+    if (this.state.press_toggle == false) {
       console.log('hi');
       this.setState({
-        press_toggle:true
+        press_toggle: true
       });
-      this.startTimer(this.state.seconds);
+      this.startTimer(30);
     }
 
 
@@ -247,18 +258,19 @@ class Example extends Component {
     } = this.state;
 
     if (!started)
-      return (
-        <div style={{
-          height: '100vh'
-        }}>
-          <div className="container">
-            <button className="start-btn" onClick={() => this.setTime(30)}>
-              Start game
-            </button>
 
-          </div>
+    return (
+      <div style={{
+        height: '100vh'
+      }}>
+        <div className="container">
+          <button className="start-btn" onClick={() => this.setTime(30)}>
+            Start game
+          </button>
+
         </div>
-      );
+      </div>
+    );
 
     if (!text) return <p>Loading...</p>;
 
@@ -268,7 +280,7 @@ class Example extends Component {
           <h2>
             Your WPM is <strong>{wpm}</strong>
           </h2>
-          <button className="start-btn" onClick={() => this.startTimer(30)}>
+          <button className="start-btn" onClick={() => this.setTime(30)}>
             Play again
           </button>
         </div>
@@ -285,9 +297,9 @@ class Example extends Component {
           <strong>Time: </strong>
           {Math.floor(timeElapsed * 60)}s
         </div>
-        <div className="container">
+        <div className="container" tabindex="0"  onKeyDown = {this.onPress}>
           {this.state.time.s}
-          
+
           <button className="start-btn" onClick={() => this.test(30)}>
             30
           </button>
@@ -297,12 +309,13 @@ class Example extends Component {
           <button className="start-btn" onClick={() => this.startTimer(90)}>
             90
           </button>
+
           <button className="start-btn" onClick={() => this.setTime(30)}>
             30Fix
           </button>
 
           <button className="start-btn" onClick={() => this.setTime(60)}>
-            30Fix
+            60Fix
           </button>
           <button className="start-btn" onClick={() => this.setTime(90)}>
             90Fix
@@ -337,10 +350,10 @@ class Example extends Component {
                     return (
                       <span
                         className={`letter ${isCurrentWord && shouldBeHighlighted
-                            ? isWronglyTyped
-                              ? "red"
-                              : "green"
-                            : ""
+                          ? isWronglyTyped
+                            ? "red"
+                            : "green"
+                          : ""
                           }`}
                         key={l_idx}
                       >
