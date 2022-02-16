@@ -1,0 +1,31 @@
+.control {
+    font-size: 50;
+    justify-content: center;
+    margin: 1em;
+    
+    display: inline-block;
+    text-align: center;
+
+}
+
+.actives {
+    font-size: 50;
+    justify-content: center;
+    margin: 1em;
+    
+    display: inline-block;
+    text-align: center;
+    color: #985E6D;
+}
+
+.actives:hover {
+    color: white;
+    cursor: pointer;
+    transition: ease-out  0.5s;
+}
+
+.control:hover {
+    color: #985E6D;
+    cursor: pointer;
+    transition: ease-out  0.5s;
+}
