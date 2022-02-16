@@ -87,7 +87,7 @@ class Example extends Component {
       console.log(this.timer);
     }
 
-    this.setText();
+    //this.setText();
 
     this.setState({
       started: true,
@@ -107,8 +107,10 @@ class Example extends Component {
       seconds: time,
       timer: 0,
       completed: false,
-      press_toggle: false
+      press_toggle: false,
+      inputValue: ""
     });
+
     this.state.seconds = time
     this.setText();
     this.secondsToTime(time)
@@ -119,11 +121,14 @@ class Example extends Component {
   countDown() {
     // Remove one second, set state so a re-render happens.
     let seconds = this.state.seconds - 1;
-    this.setState({
-      time: this.secondsToTime(seconds),
-      seconds: seconds,
-    });
+    if (this.state.press_toggle) {
+      
+      this.setState({
+        time: this.secondsToTime(seconds),
+        seconds: seconds,
+      });
 
+    }
     // Check if we're at zero.
     if (seconds == 0) {
 
@@ -149,7 +154,7 @@ class Example extends Component {
       this.setState({
         press_toggle: true
       });
-      this.startTimer(30);
+      this.startTimer(this.state.seconds);
     }
 
 
@@ -259,18 +264,18 @@ class Example extends Component {
 
     if (!started)
 
-    return (
-      <div style={{
-        height: '100vh'
-      }}>
-        <div className="container">
-          <button className="start-btn" onClick={() => this.setTime(30)}>
-            Start game
-          </button>
+      return (
+        <div style={{
+          height: '100vh'
+        }}>
+          <div className="container">
+            <button className="start-btn" onClick={() => this.setTime(30)}>
+              Start game
+            </button>
 
+          </div>
         </div>
-      </div>
-    );
+      );
 
     if (!text) return <p>Loading...</p>;
 
@@ -297,10 +302,10 @@ class Example extends Component {
           <strong>Time: </strong>
           {Math.floor(timeElapsed * 60)}s
         </div>
-        <div className="container" tabindex="0"  onClick = {() => this.test(30)}>
+        <div className="container" tabindex="0" onClick={() => this.test(30)}>
           {this.state.time.s}
 
-          <button className="start-btn" onClick={() => this.test(30)}>
+          {/* <button className="start-btn" onClick={() => this.test(30)}>
             30
           </button>
           <button className="start-btn" onClick={() => this.startTimer(60)}>
@@ -308,7 +313,7 @@ class Example extends Component {
           </button>
           <button className="start-btn" onClick={() => this.startTimer(90)}>
             90
-          </button>
+          </button> */}
 
           <button className="start-btn" onClick={() => this.setTime(30)}>
             30Fix
