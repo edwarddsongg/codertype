@@ -20,7 +20,10 @@ class Example extends Component {
       wpm: 0,
       started: false,
       thisprogress: 0,
-      press_toggle: false
+      press_toggle: false,
+      thirty: false,
+      sixty: false,
+      ninety: false
     };
     this.timer = 0;
     this.startTimer = this.startTimer.bind(this);
@@ -100,6 +103,14 @@ class Example extends Component {
   }
 
   setTime = (time) => {
+
+    if(time == 30) {
+      this.setState({thirty: true, sixty: false, ninety: false})
+    } else if(time == 60) {
+      this.setState({sixty: true, thirty: false, ninety: false})
+    } else {
+      this.setState({ninety: true, sixty: false, thirty: false})
+    }
     console.log(time)
     this.setState({
       started: true,
@@ -302,7 +313,7 @@ class Example extends Component {
           <strong>Time: </strong>
           {Math.floor(timeElapsed * 60)}s
         </div>
-        <div className="container" tabindex="0" onClick={() => this.test(30)}>
+        <div className="container" tabindex="0">
           <span className = "display_time">{this.state.time.s} </span>
 
           {/* <button className="start-btn" onClick={() => this.test(30)}>
@@ -315,14 +326,14 @@ class Example extends Component {
             90
           </button> */}
           <div className="time_sets">
-          <span className="time_change" onClick={() => this.setTime(30)}>
+          <span className={this.state.thirty ? 'active_time': 'time_change'}onClick={() => this.setTime(30)} >
             30s
           </span>
 
-          <span className="time_change" onClick={() => this.setTime(60)}>
+          <span className={this.state.sixty ? 'active_time': 'time_change'} onClick={() => this.setTime(60)}>
             60s 
           </span>
-          <span className="time_change" onClick={() => this.setTime(90)}>
+          <span className={this.state.ninety ? 'active_time': 'time_change'} onClick={() => this.setTime(90)}>
             90s
           </span>
           </div>
