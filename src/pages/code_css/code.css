@@ -76,6 +76,16 @@ p {
   color: green; 
 }
 
+.blur_div {
+  -webkit-filter: blur(3px);
+  -moz-filter: blur(3px);
+  -o-filter: blur(5px);
+  -ms-filter: blur(5px);
+  filter: blur(5px);
+
+  background-color: #192231;
+}
+
 
 .time_change:hover {
   color: #985E6D;

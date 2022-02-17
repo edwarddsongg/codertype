@@ -166,6 +166,7 @@ class Example extends Component {
         press_toggle: true
       });
       this.startTimer(this.state.seconds);
+      return
     }
 
 
@@ -338,6 +339,7 @@ class Example extends Component {
           </span>
           </div>
           <progress value={progress} max="100" />
+          <div className={this.state.press_toggle ? 'standard': 'blur_div'}>
           <p className="text">
             {this.state.text.map((word, w_idx) => {
               let highlight = false;
@@ -382,6 +384,7 @@ class Example extends Component {
               );
             })}
           </p>
+          </div>
           <input
             type="text"
             onChange={this.handleChange}
