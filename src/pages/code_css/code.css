@@ -30,7 +30,7 @@ p {
 .container {
     
     padding: 30px;
-    width: 650px;
+    width: 90%;
     max-width: 100%;
     display: flex;
     flex-direction: column;
@@ -50,6 +50,26 @@ p {
   font-size: 20px;
   margin: 10px 0;
   width: 100%;
+}
+
+.time_sets{
+  display: inline-block;
+  padding: 5px;
+}
+
+.display_time {
+  color: gold;
+}
+
+.time_change {
+  white-space: nowrap;
+  display: inline-block;
+  margin: 2px;
+}
+
+.time_change:hover {
+  color: #985E6D;
+  cursor: pointer;
 }
 
 .start-btn {
