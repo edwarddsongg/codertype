@@ -1,5 +1,5 @@
 .control {
-    font-size: 50;
+    font-size: 20px;
     justify-content: center;
     margin: 1em;
     
@@ -9,7 +9,7 @@
 }
 
 .actives {
-    font-size: 50;
+    font-size: 20px;
     justify-content: center;
     margin: 1em;
     
@@ -21,11 +21,47 @@
 .actives:hover {
     color: white;
     cursor: pointer;
-    transition: ease-out  0.5s;
+    
+}
+
+.size {
+    font-size:20px;
+}
+
+.inner_box {
+    border:1px solid black;
+    width:50%;
+    justify-content: center;
+    margin: auto;
+    background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0, 0.4); /* Black w/opacity/see-through */
+}
+
+.input_group {
+    font-size:15px;
+}
+
+#label {
+    font-size: 30px;
+    background-color: green;;
 }
 
 .control:hover {
     color: #985E6D;
     cursor: pointer;
-    transition: ease-out  0.5s;
+   
+}
+
+/* .sign_img {
+    background-image: url("../../images/code2.jpeg");
+    height: 100vh;
+    scale: 50%;
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
+} */
+
+.main_contain {
+    background-image: url("../../images/code2.jpeg");
+    height: 100vh;
+    scale: 50%;
 }
