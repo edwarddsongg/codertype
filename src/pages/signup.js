@@ -25,16 +25,23 @@ class Signup extends React.Component {
         <div className="sign_img"></div>
         <div className="box_contain">
           <div className="box_control">
-            <div className={this.state.loginState ? 'actives' : 'control'} onClick={this.displayLogin.bind(this)}>
-              Login
-            </div>
-            <div className={this.state.registerState ? 'actives' : 'control'} onClick={this.displayRegister.bind(this)}>
-              Register
-            </div>
-
             <div className="box-contain">
+              <div className="header_contain">
+                <div className={this.state.loginState ? 'actives' : 'control'} onClick={this.displayLogin.bind(this)}>
+                  Login
+                </div>
+                <div className={this.state.registerState ? 'actives' : 'control'} onClick={this.displayRegister.bind(this)}>
+                  Register
+                </div>
+              </div>
+
+              <div className="blank_setup"> test </div>
+
+              <div className="page_state">
               {this.state.loginState && <LoginComp />}
               {this.state.registerState && <RegisterComp />}
+              </div>
+             
             </div>
           </div>
         </div>
@@ -89,20 +96,25 @@ class RegisterComp extends React.Component {
 
   render() {
     return (
-      <div className="inner_box">
-        <div className="box_head">
-          Register
-        </div>
-        <div className="input_group">
-          <label htmlFor="usernmae"> Password</label>
-          <input type="text" name="username" className="login_input" placeholder="Username" />
+      <div className="detail_contain">
+
+        <div className="inner_box">
+          <div className="box_head">
+            Register
+          </div>
+          <div className="input_group">
+            <label htmlFor="usernmae"> Password</label>
+            <input type="text" name="username" className="login_input" placeholder="Username" />
+          </div>
+
+          <div className="input_group">
+            <label htmlFor="password"> Password</label>
+            <input type="password" name="password" className="login_input" placeholder="Password" />
+          </div>
+          <button type="button" className="login_btn" onClick={this.login_register.bind(this)}> Login </button>
         </div>
 
-        <div className="input_group">
-          <label htmlFor="password"> Password</label>
-          <input type="password" name="password" className="login_input" placeholder="Password" />
-        </div>
-        <button type="button" className="login_btn" onClick={this.login_register.bind(this)}> Login </button>
+        
       </div>
 
     )
