@@ -303,7 +303,7 @@ class Example extends Component {
           {Math.floor(timeElapsed * 60)}s
         </div>
         <div className="container" tabindex="0" onClick={() => this.test(30)}>
-          {this.state.time.s}
+          <span className = "display_time">{this.state.time.s} </span>
 
           {/* <button className="start-btn" onClick={() => this.test(30)}>
             30
@@ -314,17 +314,18 @@ class Example extends Component {
           <button className="start-btn" onClick={() => this.startTimer(90)}>
             90
           </button> */}
+          <div className="time_sets">
+          <span className="time_change" onClick={() => this.setTime(30)}>
+            30s
+          </span>
 
-          <button className="start-btn" onClick={() => this.setTime(30)}>
-            30Fix
-          </button>
-
-          <button className="start-btn" onClick={() => this.setTime(60)}>
-            60Fix
-          </button>
-          <button className="start-btn" onClick={() => this.setTime(90)}>
-            90Fix
-          </button>
+          <span className="time_change" onClick={() => this.setTime(60)}>
+            60s 
+          </span>
+          <span className="time_change" onClick={() => this.setTime(90)}>
+            90s
+          </span>
+          </div>
           <progress value={progress} max="100" />
           <p className="text">
             {this.state.text.map((word, w_idx) => {
