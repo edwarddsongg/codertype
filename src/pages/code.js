@@ -385,13 +385,19 @@ class Example extends Component {
             })}
           </p>
           </div>
+
+          <div class = "input_hover">
           <input
             type="text"
+            class = "blend_input"
             onChange={this.handleChange}
             value={inputValue}
             // autoFocus={started ? 'true' : 'false'}
             autoFocus={true}
           />
+          <span class="bar"></span>
+          <label for = "blend_input"> Type to start </label>
+          </div>
         </div>
       </div>
     );
