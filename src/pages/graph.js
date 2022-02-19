@@ -25,12 +25,13 @@ ChartJS.register(
 
 class Graph extends React.Component {
     data_return(x, y) {
-        console.log('rev', x);
-       console.log('revs', y);
-        let reverse = x.reverse()
-        console.log(reverse)
+        var ret = new Array;
+        for (var i = x.length - 1; i >= 0; i--) {
+            ret.push(x[i]);
+        }
+        
         const data = {
-            labels: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26],
+            labels: ret,
             datasets: [
                 {
                     label: 'what',
@@ -59,6 +60,6 @@ class Graph extends React.Component {
         )
     }
 };
-   
+
 
 export default Graph;

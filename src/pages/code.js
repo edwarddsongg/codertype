@@ -378,7 +378,7 @@ class Example extends Component {
             Play again
           </button>
 
-          <Graph x_arr = {this.state.second_stamps} y_arr = {this.state.time_stamps}></Graph>
+          <Graph x_arr = {this.state.second_stamps.reverse()} y_arr = {this.state.time_stamps}></Graph>
         </div>
       );
     }
