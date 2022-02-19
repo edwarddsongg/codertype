@@ -2,6 +2,10 @@ import React, { Component } from "react";
 import "./code_css/code.css";
 import Timer from './timers/timers'
 import randomWords from 'random-words'
+import Graph from './graph'
+
+let word_arr = []
+let index_track = 0;
 
 class Example extends Component {
   constructor(props) {
@@ -23,7 +27,11 @@ class Example extends Component {
       press_toggle: false,
       thirty: false,
       sixty: false,
-      ninety: false
+      ninety: false,
+      index_track: 0,
+      time_stamps: [],
+      second_stamps: [],
+      prev_time_s: 0,
     };
     this.timer = 0;
     this.startTimer = this.startTimer.bind(this);
@@ -33,6 +41,28 @@ class Example extends Component {
   }
 
   setText = () => {
+
+    const code = [
+      `public class CallingMethodsInSameClass
+    {
+      public static void main(String[] args) {
+        printOne();
+        printOne();
+        printTwo();
+      }
+    
+      public static void printOne() {
+        System.out.println("Hello World");
+      }
+    
+      public static void printTwo() {
+        printOne();
+        printOne();
+      }
+    }`]
+    for (let i = 0; i < 100; i++) {
+      word_arr[i] = true;
+    }
 
     const text = Array(100).fill(null).map(() => randomWords())
     const words = text
@@ -71,7 +101,7 @@ class Example extends Component {
 
 
   startTimer = (time) => {
-
+    index_track = 0;
     this.setState({
       started: true,
       startTime: Date.now(),
@@ -83,11 +113,9 @@ class Example extends Component {
 
     this.componentDidMount();
 
-    console.log(this.timer, this.state.seconds);
     if (this.timer == 0 && this.state.seconds > 0) {
 
       this.timer = setInterval(this.countDown, 1000);
-      console.log(this.timer);
     }
 
     //this.setText();
@@ -104,12 +132,12 @@ class Example extends Component {
 
   setTime = (time) => {
 
-    if(time == 30) {
-      this.setState({thirty: true, sixty: false, ninety: false})
-    } else if(time == 60) {
-      this.setState({sixty: true, thirty: false, ninety: false})
+    if (time == 30) {
+      this.setState({ thirty: true, sixty: false, ninety: false })
+    } else if (time == 60) {
+      this.setState({ sixty: true, thirty: false, ninety: false })
     } else {
-      this.setState({ninety: true, sixty: false, thirty: false})
+      this.setState({ ninety: true, sixty: false, thirty: false })
     }
     console.log(time)
     this.setState({
@@ -119,7 +147,12 @@ class Example extends Component {
       timer: 0,
       completed: false,
       press_toggle: false,
-      inputValue: ""
+      inputValue: "",
+      wpm: 0,
+      time: 0,
+      time_stamps: [],
+      second_stamps: [],
+      prev_stamp: time
     });
 
     this.state.seconds = time
@@ -132,8 +165,18 @@ class Example extends Component {
   countDown() {
     // Remove one second, set state so a re-render happens.
     let seconds = this.state.seconds - 1;
+
+    if (seconds == this.state.prev_stamp - 2) {
+
+      this.setState({
+        prev_stamp: seconds,
+        time_stamps: [...this.state.time_stamps, this.state.wpm],
+        second_stamps: [...this.state.second_stamps, seconds]
+      });
+    }
+
     if (this.state.press_toggle) {
-      
+
       this.setState({
         time: this.secondsToTime(seconds),
         seconds: seconds,
@@ -155,11 +198,10 @@ class Example extends Component {
   }
 
   onPress(e) {
-    console.log(this)
+    
   }
 
   handleChange = e => {
-    console.log(this)
     if (this.state.press_toggle == false) {
       console.log('hi');
       this.setState({
@@ -176,22 +218,60 @@ class Example extends Component {
     let prog;
     const currentWord = words[0];
     // console.log(currentWord, "currentWord");
+    if (this.state.seconds == 0) {
+      this.setState({
+        completed: true,
 
+        inputValue: "",
+        // completed: newWords.length === 0,
+
+      });
+
+      console.log(this.state.completed);
+      console.log('why');
+    }
     // if space or '.', check the word
     if (lastLetter === " " || lastLetter === ".") {
       // check to see if it matches to the currentWord
       // trim because it has the space
-      if (inputValue.trim() === currentWord) {
-        // remove the word from the wordsArray
-        // cleanUp the input
-        const newWords = [...words.slice(1)];
-        //console.log(newWords, "newWords");
-        //console.log(newWords.length, "newWords.length");
-        const newCompletedWords = [...completedWords, currentWord];
-        //console.log(newCompletedWords, "newCompletedWords");
-        //console.log("----------------");
 
-        // Get the total progress by checking how much words are left
+      // remove the word from the wordsArray
+      // cleanUp the input
+      const newWords = [...words.slice(1)];
+      //console.log(newWords, "newWords");
+      //console.log(newWords.length, "newWords.length");
+      //console.log(newCompletedWords, "newCompletedWords");
+      //console.log("----------------");
+
+      // Get the total progress by checking how much words are left
+
+
+
+      if (inputValue.trim() == currentWord) {
+        const newCompletedWords = [...completedWords, currentWord];
+      
+        const progress =
+          (newCompletedWords.length /
+            (newWords.length + newCompletedWords.length)) *
+          100;
+
+
+        word_arr[index_track] = true;
+        index_track++;
+
+        this.setState({
+          words: newWords,
+          completedWords: newCompletedWords,
+          inputValue: "",
+          // completed: newWords.length === 0,
+          progress: progress
+        });
+      } else if (inputValue.trim().length >= currentWord.length) {
+
+        word_arr[index_track] = false;
+        index_track++;
+        const newCompletedWords = [...completedWords, inputValue.trim()];
+
         const progress =
           (newCompletedWords.length /
             (newWords.length + newCompletedWords.length)) *
@@ -204,22 +284,11 @@ class Example extends Component {
           // completed: newWords.length === 0,
           progress: progress
         });
-        console.log(this.state.seconds);
-
-        if (this.state.seconds == 0) {
-          this.setState({
-            completed: true,
-
-            inputValue: "",
-            // completed: newWords.length === 0,
-
-          });
-
-          console.log(this.state.completed);
-          console.log('why');
-        }
-
       }
+
+
+
+
     } else {
       this.setState({
         inputValue: inputValue,
@@ -235,9 +304,6 @@ class Example extends Component {
           // completed: newWords.length === 0,
 
         });
-
-        console.log(this.state.completed);
-        console.log('why');
       }
 
     }
@@ -248,7 +314,16 @@ class Example extends Component {
   calculateWPM = () => {
     const { startTime, completedWords } = this.state;
     const now = Date.now();
-    const diff = (now - startTime) / 1000 / 60; // 1000 ms / 60 s
+
+    let diff = 0;
+    if (this.state.thirty) {
+      diff = (now - startTime) / 1000 / 30; // 1000 ms / 60 s
+    } else if (this.state.sixty) {
+      diff = (now - startTime) / 1000 / 60; // 1000 ms / 60 s
+    } else {
+      diff = (now - startTime) / 1000 / 90; // 1000 ms / 60 s
+    }
+
 
     const wordsTyped = Math.ceil(
       completedWords.reduce((acc, word) => (acc += word.length), 0) / 5
@@ -292,6 +367,8 @@ class Example extends Component {
     if (!text) return <p>Loading...</p>;
 
     if (completed) {
+      console.log(this.state.time_stamps)
+      console.log(this.state.time_stamps[1][0])
       return (
         <div className="container">
           <h2>
@@ -300,6 +377,8 @@ class Example extends Component {
           <button className="start-btn" onClick={() => this.setTime(30)}>
             Play again
           </button>
+
+          <Graph x_arr = {this.state.second_stamps.reverse()} y_arr = {this.state.time_stamps}></Graph>
         </div>
       );
     }
@@ -314,8 +393,8 @@ class Example extends Component {
           <strong>Time: </strong>
           {Math.floor(timeElapsed * 60)}s
         </div>
-        <div className="container" tabindex="0">
-          <span className = "display_time">{this.state.time.s} </span>
+        <div className="container">
+          <span className="display_time">{this.state.time.s} </span>
 
           {/* <button className="start-btn" onClick={() => this.test(30)}>
             30
@@ -327,77 +406,91 @@ class Example extends Component {
             90
           </button> */}
           <div className="time_sets">
-          <span className={this.state.thirty ? 'active_time': 'time_change'}onClick={() => this.setTime(30)} >
-            30s
-          </span>
+          <span className={this.state.thirty ? 'active_time' : 'time_change'} onClick={() => this.setTime(5)} >
+              5s
+            </span>
 
-          <span className={this.state.sixty ? 'active_time': 'time_change'} onClick={() => this.setTime(60)}>
-            60s 
-          </span>
-          <span className={this.state.ninety ? 'active_time': 'time_change'} onClick={() => this.setTime(90)}>
-            90s
-          </span>
+            <span className={this.state.thirty ? 'active_time' : 'time_change'} onClick={() => this.setTime(30)} >
+              30s
+            </span>
+
+            <span className={this.state.sixty ? 'active_time' : 'time_change'} onClick={() => this.setTime(60)}>
+              60s
+            </span>
+            <span className={this.state.ninety ? 'active_time' : 'time_change'} onClick={() => this.setTime(90)}>
+              90s
+            </span>
           </div>
           <progress value={progress} max="100" />
-          <div className={this.state.press_toggle ? 'standard': 'blur_div'}>
-          <p className="text">
-            {this.state.text.map((word, w_idx) => {
-              let highlight = false;
-              let currentWord = false;
+          <div className={this.state.press_toggle ? 'standard' : 'blur_div'}>
+            <p className="text">
+              {this.state.text.map((word, w_idx) => {
+                let highlight = false;
+                let currentWord = false;
+                let red = false;
+                // this means that the word is completed, so turn it green
+                if (completedWords.length > w_idx) {
 
-              // this means that the word is completed, so turn it green
-              if (completedWords.length > w_idx) {
-                highlight = true;
-              }
+        
+                  if (!word_arr[w_idx]) {
+                    red = true;
+                  }
 
-              if (completedWords.length === w_idx) {
-                currentWord = true;
-              }
+                  highlight = true;
+                }
 
-              return (
-                <span
-                  className={`word 
-                                ${highlight && "green"} 
+                if (completedWords.length === w_idx) {
+                  currentWord = true;
+                }
+
+                return (
+                  <span
+                    className={`word 
+                                ${highlight && "sea_blue"} 
+                                ${red && "red"}
                                 ${currentWord && "underline"}`}
-                  key={w_idx}
-                >
-                  {word.split("").map((letter, l_idx) => {
-                    const isCurrentWord = w_idx === completedWords.length;
-                    const isWronglyTyped = letter !== inputValue[l_idx];
-                    const shouldBeHighlighted = l_idx < inputValue.length;
+                    key={w_idx}
+                  >
+                    {word.split("").map((letter, l_idx) => {
+                      const isCurrentWord = w_idx === completedWords.length;
+                      const isWronglyTyped = letter !== inputValue[l_idx];
+                      const shouldBeHighlighted = l_idx < inputValue.length;
 
-                    return (
-                      <span
-                        className={`letter ${isCurrentWord && shouldBeHighlighted
-                          ? isWronglyTyped
-                            ? "red"
-                            : "green"
-                          : ""
-                          }`}
-                        key={l_idx}
-                      >
-                        {letter}
-                      </span>
-                    );
-                  })}
-                </span>
-              );
-            })}
-          </p>
+                      return (
+                        <span
+                          className={`letter ${isCurrentWord && shouldBeHighlighted
+                            ? isWronglyTyped
+                              ? "red"
+                              : "sea_blue"
+                            : ""
+                            }`}
+                          key={l_idx}
+                        >
+                          {letter}
+                        </span>
+                      );
+                    })}
+                  </span>
+                );
+              })}
+            </p>
           </div>
 
-          <div class = "input_hover">
-          <input
-            type="text"
-            class = "blend_input"
-            onChange={this.handleChange}
-            value={inputValue}
-            // autoFocus={started ? 'true' : 'false'}
-            autoFocus={true}
-          />
-          <span class="bar"></span>
-          <label for = "blend_input"> Type to start </label>
+          <div className="input_hover">
+            <span class="field field_v2">
+              <input class="field__input"
+                type="text"
+                onChange={this.handleChange}
+                value={inputValue}
+                // autoFocus={started ? 'true' : 'false'}
+                autoFocus={true} />
+              <label class="field__label-wrap">
+                <span class="field__label">Type to start!</span>
+              </label>
+            </span>
           </div>
+
+
         </div>
       </div>
     );
