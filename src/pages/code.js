@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./code_css/code.css";
 import Timer from './timers/timers'
 import randomWords from 'random-words'
+import Graph from './graph'
 
 let word_arr = []
 let index_track = 0;
@@ -27,7 +28,10 @@ class Example extends Component {
       thirty: false,
       sixty: false,
       ninety: false,
-      index_track: 0
+      index_track: 0,
+      time_stamps: [],
+      second_stamps: [],
+      prev_time_s: 0,
     };
     this.timer = 0;
     this.startTimer = this.startTimer.bind(this);
@@ -59,6 +63,7 @@ class Example extends Component {
     for (let i = 0; i < 100; i++) {
       word_arr[i] = true;
     }
+
     const text = Array(100).fill(null).map(() => randomWords())
     const words = text
 
@@ -96,7 +101,7 @@ class Example extends Component {
 
 
   startTimer = (time) => {
-
+    index_track = 0;
     this.setState({
       started: true,
       startTime: Date.now(),
@@ -108,11 +113,9 @@ class Example extends Component {
 
     this.componentDidMount();
 
-    console.log(this.timer, this.state.seconds);
     if (this.timer == 0 && this.state.seconds > 0) {
 
       this.timer = setInterval(this.countDown, 1000);
-      console.log(this.timer);
     }
 
     //this.setText();
@@ -145,6 +148,11 @@ class Example extends Component {
       completed: false,
       press_toggle: false,
       inputValue: "",
+      wpm: 0,
+      time: 0,
+      time_stamps: [],
+      second_stamps: [],
+      prev_stamp: time
     });
 
     this.state.seconds = time
@@ -157,6 +165,16 @@ class Example extends Component {
   countDown() {
     // Remove one second, set state so a re-render happens.
     let seconds = this.state.seconds - 1;
+
+    if (seconds == this.state.prev_stamp - 2) {
+
+      this.setState({
+        prev_stamp: seconds,
+        time_stamps: [...this.state.time_stamps, this.state.wpm],
+        second_stamps: [...this.state.second_stamps, seconds]
+      });
+    }
+
     if (this.state.press_toggle) {
 
       this.setState({
@@ -180,7 +198,7 @@ class Example extends Component {
   }
 
   onPress(e) {
-    console.log(this)
+    
   }
 
   handleChange = e => {
@@ -229,18 +247,17 @@ class Example extends Component {
 
 
 
-      console.log(this.state.seconds);
-
       if (inputValue.trim() == currentWord) {
         const newCompletedWords = [...completedWords, currentWord];
-        console.log(...completedWords)
+      
         const progress =
           (newCompletedWords.length /
             (newWords.length + newCompletedWords.length)) *
           100;
 
 
-        ++index_track;
+        word_arr[index_track] = true;
+        index_track++;
 
         this.setState({
           words: newWords,
@@ -250,11 +267,11 @@ class Example extends Component {
           progress: progress
         });
       } else if (inputValue.trim().length >= currentWord.length) {
-        
+
         word_arr[index_track] = false;
         index_track++;
         const newCompletedWords = [...completedWords, inputValue.trim()];
-        console.log(newCompletedWords)
+
         const progress =
           (newCompletedWords.length /
             (newWords.length + newCompletedWords.length)) *
@@ -350,6 +367,8 @@ class Example extends Component {
     if (!text) return <p>Loading...</p>;
 
     if (completed) {
+      console.log(this.state.time_stamps)
+      console.log(this.state.time_stamps[1][0])
       return (
         <div className="container">
           <h2>
@@ -358,6 +377,8 @@ class Example extends Component {
           <button className="start-btn" onClick={() => this.setTime(30)}>
             Play again
           </button>
+
+          <Graph x_arr = {this.state.second_stamps} y_arr = {this.state.time_stamps}></Graph>
         </div>
       );
     }
@@ -385,6 +406,10 @@ class Example extends Component {
             90
           </button> */}
           <div className="time_sets">
+          <span className={this.state.thirty ? 'active_time' : 'time_change'} onClick={() => this.setTime(5)} >
+              5s
+            </span>
+
             <span className={this.state.thirty ? 'active_time' : 'time_change'} onClick={() => this.setTime(30)} >
               30s
             </span>
@@ -405,12 +430,12 @@ class Example extends Component {
                 let red = false;
                 // this means that the word is completed, so turn it green
                 if (completedWords.length > w_idx) {
-                  
-                  console.log(word_arr)
-                  if(!word_arr[w_idx]) {
+
+        
+                  if (!word_arr[w_idx]) {
                     red = true;
                   }
-                  
+
                   highlight = true;
                 }
 
