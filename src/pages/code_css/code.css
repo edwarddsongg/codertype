@@ -80,6 +80,11 @@ p {
   color: #98878F; 
 }
 
+.active_time:hover {
+  cursor:pointer;
+  color:#985E6D;
+}
+
 .blur_div {
   -webkit-filter: blur(3px);
   -moz-filter: blur(3px);
