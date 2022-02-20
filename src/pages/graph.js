@@ -24,7 +24,7 @@ ChartJS.register(
 
 
 class Graph extends React.Component {
-    data_return(x, y) {
+    data_return(x, y, r_y) {
         var ret = new Array;
         for (var i = x.length - 1; i >= 0; i--) {
             ret.push(x[i]);
@@ -40,12 +40,12 @@ class Graph extends React.Component {
                     backgroundColor: "rgba(75,192,192,0.2)",
                     borderColor: "rgba(75,192,192,1)"
                 },
-                // {
-                //     label: "Second dataset",
-                //     data: [33, 25, 35, 51, 54, 76],
-                //     fill: false,
-                //     borderColor: "#742774"
-                // }
+                {
+                    label: "Keystrokes per second",
+                    data: r_y,
+                    fill: false,
+                    borderColor: "#742774"
+                }
             ]
         };
 
@@ -55,7 +55,7 @@ class Graph extends React.Component {
     render() {
         return (
             < div className="time" >
-                <Line data={this.data_return(this.props.x_arr, this.props.y_arr)} />
+                <Line data={this.data_return(this.props.x_arr, this.props.y_arr, this.props.r_y)} />
             </div >
         )
     }

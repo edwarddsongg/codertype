@@ -6,6 +6,10 @@ import Graph from './graph'
 
 let word_arr = []
 let index_track = 0;
+let correct_let =  0;
+let total_let = 0;
+let track = 0;
+let unique_key = 0;
 
 class Example extends Component {
   constructor(props) {
@@ -31,7 +35,14 @@ class Example extends Component {
       index_track: 0,
       time_stamps: [],
       second_stamps: [],
-      prev_time_s: 0,
+      raw_arr: [],
+      key_stroke: 0,
+      key_wpm: 0,
+      accuracy: 0,
+      correct_word: 0,
+      total_word: 0,
+      raw_wpm: 0,
+      prev_time_s: 0
     };
     this.timer = 0;
     this.startTimer = this.startTimer.bind(this);
@@ -152,8 +163,17 @@ class Example extends Component {
       time: 0,
       time_stamps: [],
       second_stamps: [],
-      prev_stamp: time
+      prev_stamp: time,
+      raw_arr: [],
+      key_stroke: 0,
+      accuracy: 0,
+      correct_word: 0,
+      total_word: 0,
+      raw_wpm: 0
     });
+    total_let=0;
+    correct_let=0;
+    track = 0;
 
     this.state.seconds = time
     this.setText();
@@ -167,10 +187,14 @@ class Example extends Component {
     let seconds = this.state.seconds - 1;
 
     if (seconds == this.state.prev_stamp - 2) {
+      
+      let temp = this.state.key_stroke;
 
       this.setState({
         prev_stamp: seconds,
         time_stamps: [...this.state.time_stamps, this.state.wpm],
+        raw_arr: [...this.state.raw_arr, temp/2],
+        key_stroke: 0,
         second_stamps: [...this.state.second_stamps, seconds]
       });
     }
@@ -217,6 +241,13 @@ class Example extends Component {
     const lastLetter = inputValue[inputValue.length - 1];
     let prog;
     const currentWord = words[0];
+    
+    this.setState({
+      key_stroke: ++this.state.key_stroke
+    });
+    console.log(this.state.key_stroke)
+    
+
     // console.log(currentWord, "currentWord");
     if (this.state.seconds == 0) {
       this.setState({
@@ -262,6 +293,8 @@ class Example extends Component {
         this.setState({
           words: newWords,
           completedWords: newCompletedWords,
+          correct_word: this.state.correct+1,
+          total_word: this.state.total_word+1,
           inputValue: "",
           // completed: newWords.length === 0,
           progress: progress
@@ -281,6 +314,7 @@ class Example extends Component {
           words: newWords,
           completedWords: newCompletedWords,
           inputValue: "",
+          total_word: this.state.total_word+1,
           // completed: newWords.length === 0,
           progress: progress
         });
@@ -315,27 +349,33 @@ class Example extends Component {
     const { startTime, completedWords } = this.state;
     const now = Date.now();
 
-    let diff = 0;
-    if (this.state.thirty) {
-      diff = (now - startTime) / 1000 / 30; // 1000 ms / 60 s
-    } else if (this.state.sixty) {
-      diff = (now - startTime) / 1000 / 60; // 1000 ms / 60 s
-    } else {
-      diff = (now - startTime) / 1000 / 90; // 1000 ms / 60 s
-    }
-
-
+   
+    let diff = (now - startTime) / 1000 / 60; // 1000 ms / 60 s
+    
     const wordsTyped = Math.ceil(
       completedWords.reduce((acc, word) => (acc += word.length), 0) / 5
     );
 
     const wpm = Math.ceil(wordsTyped / diff);
-
+    
     this.setState({
       wpm: wpm,
       timeElapsed: diff
     });
   };
+
+
+  track_no_repeat(ch, num, correct) {
+    if(num != track && correct) {
+      correct_let++;
+      total_let++;
+      track = num;
+    } else if(num != track && !correct) {
+      total_let++;
+      track = num;
+    }
+    
+  }
 
   render() {
     const {
@@ -367,8 +407,7 @@ class Example extends Component {
     if (!text) return <p>Loading...</p>;
 
     if (completed) {
-      console.log(this.state.time_stamps)
-      console.log(this.state.time_stamps[1][0])
+      console.log(this.state.raw_arr)
       return (
         <div className="container">
           <h2>
@@ -378,14 +417,27 @@ class Example extends Component {
             Play again
           </button>
 
-          <Graph x_arr = {this.state.second_stamps.reverse()} y_arr = {this.state.time_stamps}></Graph>
+          <Graph x_arr = {this.state.second_stamps.reverse()} y_arr = {this.state.time_stamps} r_y = {this.state.raw_arr}></Graph>
+          <div className="display">
+            <div className="wrap_head">
+              Statistics
+
+              <div className="wrap_stats">
+                What! {correct_let}, {total_let}
+                Letter Accuracy: {correct_let/total_let}
+              </div>
+              <div className="wrap_stats">
+                Correct Words: {this.state.correct_word} <br/>
+                Accuracy: {this.state.correct_word/this.state.total_word}
+              </div>
+            </div>
+          </div>
         </div>
       );
     }
 
     return (
       <div>
-
         <div className="wpm">
           <strong>WPM: </strong>
           {wpm}
@@ -395,7 +447,6 @@ class Example extends Component {
         </div>
         <div className="container">
           <span className="display_time">{this.state.time.s} </span>
-
           {/* <button className="start-btn" onClick={() => this.test(30)}>
             30
           </button>
@@ -430,8 +481,6 @@ class Example extends Component {
                 let red = false;
                 // this means that the word is completed, so turn it green
                 if (completedWords.length > w_idx) {
-
-        
                   if (!word_arr[w_idx]) {
                     red = true;
                   }
@@ -455,6 +504,8 @@ class Example extends Component {
                       const isCurrentWord = w_idx === completedWords.length;
                       const isWronglyTyped = letter !== inputValue[l_idx];
                       const shouldBeHighlighted = l_idx < inputValue.length;
+                      
+                      this.track_no_repeat('a', l_idx, !isWronglyTyped)
 
                       return (
                         <span
