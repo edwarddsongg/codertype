@@ -5,6 +5,15 @@
   box-sizing: border-box;
 }
 
+:root {
+  --midnight: 192231;
+  --lightPurple: #98878F;
+  --mainPurple: #985E6D;
+  --accentBlue: rgba(75,192,192,0.2);
+  --accentPurple: #742774;
+  --darksBlue: #494E6B;
+}
+
 body {
   font-size: 140%;
   flex-direction: column;
@@ -301,4 +310,64 @@ CORE STYLES
 .field_v2 .field__input:focus ~ .field__label-wrap::after{
   transform: translate3d(0, 0, 0);
   transition-delay: 0;
+}
+
+.custom-btn {
+  width: 130px;
+  height: 40px;
+  padding: 10px 25px;
+  border: 2px solid #000;
+  font-weight: 500;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+}
+
+.btn-5 {
+  background: var(--mainPurple);
+  color: #fff;
+  line-height: 42px;
+  padding: 0;
+  border: none;
+}
+.btn-5:hover {
+  background-color: var(--darksBlue);
+  color: var(white);
+   
+}
+.btn-5:before,
+.btn-5:after{
+  content:'';
+  position:absolute;
+  top:0;
+  right:0;
+  height:2px;
+  width:0;
+  
+  transition:400ms ease all;
+}
+.btn-5:after{
+  right:inherit;
+  top:inherit;
+  left:0;
+  bottom:0;
+  background-color: white;
+}
+.btn-5:hover:before,
+.btn-5:hover:after{
+  width:100%;
+  transition:800ms ease all;
+  background-color: var(--accentBlue);
+}
+
+.frame {
+  width: 90%;
+  margin: 40px auto;
+  text-align: center;
+}
+button {
+  margin: 20px;
+  outline: none;
 }

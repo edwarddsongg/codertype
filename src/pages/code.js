@@ -6,7 +6,7 @@ import Graph from './graph'
 
 let word_arr = []
 let index_track = 0;
-let correct_let =  0;
+let correct_let = 0;
 let total_let = 0;
 let track = 0;
 let unique_key = 0;
@@ -44,11 +44,12 @@ class Example extends Component {
       raw_wpm: 0,
       prev_time_s: 0
     };
+    this.setTime(30);
     this.timer = 0;
     this.startTimer = this.startTimer.bind(this);
 
     this.countDown = this.countDown.bind(this);
-
+    this.run_now = this.setTime.bind(this)
   }
 
   setText = () => {
@@ -171,8 +172,8 @@ class Example extends Component {
       total_word: 0,
       raw_wpm: 0
     });
-    total_let=0;
-    correct_let=0;
+    total_let = 0;
+    correct_let = 0;
     track = 0;
 
     this.state.seconds = time
@@ -187,13 +188,13 @@ class Example extends Component {
     let seconds = this.state.seconds - 1;
 
     if (seconds == this.state.prev_stamp - 2) {
-      
+
       let temp = this.state.key_stroke;
 
       this.setState({
         prev_stamp: seconds,
         time_stamps: [...this.state.time_stamps, this.state.wpm],
-        raw_arr: [...this.state.raw_arr, temp/2],
+        raw_arr: [...this.state.raw_arr, temp / 2],
         key_stroke: 0,
         second_stamps: [...this.state.second_stamps, seconds]
       });
@@ -222,7 +223,7 @@ class Example extends Component {
   }
 
   onPress(e) {
-    
+
   }
 
   handleChange = e => {
@@ -241,12 +242,11 @@ class Example extends Component {
     const lastLetter = inputValue[inputValue.length - 1];
     let prog;
     const currentWord = words[0];
-    
+
     this.setState({
       key_stroke: ++this.state.key_stroke
     });
-    console.log(this.state.key_stroke)
-    
+
 
     // console.log(currentWord, "currentWord");
     if (this.state.seconds == 0) {
@@ -280,7 +280,7 @@ class Example extends Component {
 
       if (inputValue.trim() == currentWord) {
         const newCompletedWords = [...completedWords, currentWord];
-      
+
         const progress =
           (newCompletedWords.length /
             (newWords.length + newCompletedWords.length)) *
@@ -293,8 +293,8 @@ class Example extends Component {
         this.setState({
           words: newWords,
           completedWords: newCompletedWords,
-          correct_word: this.state.correct+1,
-          total_word: this.state.total_word+1,
+          correct_word: this.state.correct + 1,
+          total_word: this.state.total_word + 1,
           inputValue: "",
           // completed: newWords.length === 0,
           progress: progress
@@ -314,7 +314,7 @@ class Example extends Component {
           words: newWords,
           completedWords: newCompletedWords,
           inputValue: "",
-          total_word: this.state.total_word+1,
+          total_word: this.state.total_word + 1,
           // completed: newWords.length === 0,
           progress: progress
         });
@@ -349,15 +349,15 @@ class Example extends Component {
     const { startTime, completedWords } = this.state;
     const now = Date.now();
 
-   
+
     let diff = (now - startTime) / 1000 / 60; // 1000 ms / 60 s
-    
+
     const wordsTyped = Math.ceil(
       completedWords.reduce((acc, word) => (acc += word.length), 0) / 5
     );
 
     const wpm = Math.ceil(wordsTyped / diff);
-    
+
     this.setState({
       wpm: wpm,
       timeElapsed: diff
@@ -366,15 +366,15 @@ class Example extends Component {
 
 
   track_no_repeat(ch, num, correct) {
-    if(num != track && correct) {
+    if (num != track && correct) {
       correct_let++;
       total_let++;
       track = num;
-    } else if(num != track && !correct) {
+    } else if (num != track && !correct) {
       total_let++;
       track = num;
     }
-    
+
   }
 
   render() {
@@ -413,22 +413,22 @@ class Example extends Component {
           <h2>
             Your WPM is <strong>{wpm}</strong>
           </h2>
-          <button className="start-btn" onClick={() => this.setTime(30)}>
-            Play again
-          </button>
 
-          <Graph x_arr = {this.state.second_stamps.reverse()} y_arr = {this.state.time_stamps} r_y = {this.state.raw_arr}></Graph>
+          <div className="frame">
+            <button class="custom-btn btn-5" onClick={() => this.setTime(30)}> <span> Play Again  </span></button>
+          </div>
+          <Graph x_arr={this.state.second_stamps.reverse()} y_arr={this.state.time_stamps} r_y={this.state.raw_arr}></Graph>
           <div className="display">
             <div className="wrap_head">
               Statistics
 
               <div className="wrap_stats">
                 What! {correct_let}, {total_let}
-                Letter Accuracy: {correct_let/total_let}
+                Letter Accuracy: {correct_let / total_let}
               </div>
               <div className="wrap_stats">
-                Correct Words: {this.state.correct_word} <br/>
-                Accuracy: {this.state.correct_word/this.state.total_word}
+                Correct Words: {this.state.correct_word} <br />
+                Accuracy: {this.state.correct_word / this.state.total_word}
               </div>
             </div>
           </div>
@@ -457,7 +457,7 @@ class Example extends Component {
             90
           </button> */}
           <div className="time_sets">
-          <span className={this.state.thirty ? 'active_time' : 'time_change'} onClick={() => this.setTime(5)} >
+            <span className={this.state.thirty ? 'active_time' : 'time_change'} onClick={() => this.setTime(5)} >
               5s
             </span>
 
@@ -504,7 +504,7 @@ class Example extends Component {
                       const isCurrentWord = w_idx === completedWords.length;
                       const isWronglyTyped = letter !== inputValue[l_idx];
                       const shouldBeHighlighted = l_idx < inputValue.length;
-                      
+
                       this.track_no_repeat('a', l_idx, !isWronglyTyped)
 
                       return (
