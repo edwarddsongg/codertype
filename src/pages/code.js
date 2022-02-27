@@ -6,6 +6,10 @@ import Graph from './graph'
 
 let word_arr = []
 let index_track = 0;
+let correct_let = 0;
+let total_let = 0;
+let track = 0;
+let unique_key = 0;
 
 class Example extends Component {
   constructor(props) {
@@ -31,13 +35,21 @@ class Example extends Component {
       index_track: 0,
       time_stamps: [],
       second_stamps: [],
-      prev_time_s: 0,
+      raw_arr: [],
+      key_stroke: 0,
+      key_wpm: 0,
+      accuracy: 0,
+      correct_word: 0,
+      total_word: 0,
+      raw_wpm: 0,
+      prev_time_s: 0
     };
+    this.setTime(30);
     this.timer = 0;
     this.startTimer = this.startTimer.bind(this);
 
     this.countDown = this.countDown.bind(this);
-
+    this.run_now = this.setTime.bind(this)
   }
 
   setText = () => {
@@ -139,7 +151,7 @@ class Example extends Component {
     } else {
       this.setState({ ninety: true, sixty: false, thirty: false })
     }
-    console.log(time)
+  
     this.setState({
       started: true,
       startTime: Date.now(),
@@ -152,8 +164,17 @@ class Example extends Component {
       time: 0,
       time_stamps: [],
       second_stamps: [],
-      prev_stamp: time
+      prev_stamp: time,
+      raw_arr: [],
+      key_stroke: 0,
+      accuracy: 0,
+      correct_word: 0,
+      total_word: 0,
+      raw_wpm: 0
     });
+    total_let = 0;
+    correct_let = 0;
+    track = 0;
 
     this.state.seconds = time
     this.setText();
@@ -168,9 +189,13 @@ class Example extends Component {
 
     if (seconds == this.state.prev_stamp - 2) {
 
+      let temp = this.state.key_stroke;
+
       this.setState({
         prev_stamp: seconds,
         time_stamps: [...this.state.time_stamps, this.state.wpm],
+        raw_arr: [...this.state.raw_arr, temp / 2],
+        key_stroke: 0,
         second_stamps: [...this.state.second_stamps, seconds]
       });
     }
@@ -198,38 +223,32 @@ class Example extends Component {
   }
 
   onPress(e) {
-    
+
   }
 
   handleChange = e => {
     if (this.state.press_toggle == false) {
-      console.log('hi');
       this.setState({
         press_toggle: true
       });
       this.startTimer(this.state.seconds);
-      return
+      return 
     }
-
 
     const { words, completedWords } = this.state;
     const inputValue = e.target.value;
     const lastLetter = inputValue[inputValue.length - 1];
     let prog;
     const currentWord = words[0];
+
+    this.setState({
+      key_stroke: ++this.state.key_stroke
+    });
+
+    
+    
     // console.log(currentWord, "currentWord");
-    if (this.state.seconds == 0) {
-      this.setState({
-        completed: true,
-
-        inputValue: "",
-        // completed: newWords.length === 0,
-
-      });
-
-      console.log(this.state.completed);
-      console.log('why');
-    }
+    
     // if space or '.', check the word
     if (lastLetter === " " || lastLetter === ".") {
       // check to see if it matches to the currentWord
@@ -238,18 +257,10 @@ class Example extends Component {
       // remove the word from the wordsArray
       // cleanUp the input
       const newWords = [...words.slice(1)];
-      //console.log(newWords, "newWords");
-      //console.log(newWords.length, "newWords.length");
-      //console.log(newCompletedWords, "newCompletedWords");
-      //console.log("----------------");
-
-      // Get the total progress by checking how much words are left
-
-
-
+    
       if (inputValue.trim() == currentWord) {
         const newCompletedWords = [...completedWords, currentWord];
-      
+
         const progress =
           (newCompletedWords.length /
             (newWords.length + newCompletedWords.length)) *
@@ -258,10 +269,12 @@ class Example extends Component {
 
         word_arr[index_track] = true;
         index_track++;
-
+        
         this.setState({
           words: newWords,
           completedWords: newCompletedWords,
+          correct_word: this.state.correct + 1,
+          total_word: this.state.total_word + 1,
           inputValue: "",
           // completed: newWords.length === 0,
           progress: progress
@@ -281,12 +294,11 @@ class Example extends Component {
           words: newWords,
           completedWords: newCompletedWords,
           inputValue: "",
+          total_word: this.state.total_word + 1,
           // completed: newWords.length === 0,
           progress: progress
         });
       }
-
-
 
 
     } else {
@@ -296,16 +308,36 @@ class Example extends Component {
 
       });
 
-      if (this.state.seconds == 0) {
-        this.setState({
-          completed: true,
-          timer: 0,
-          inputValue: "",
-          // completed: newWords.length === 0,
-
-        });
+      if (inputValue.trim() == currentWord) {
+        correct_let+=currentWord.length
+        total_let+=currentWord.length
+      } else if (inputValue.trim().length >= currentWord.length) {
+        console.log('hit')
+        for(let i = 0; i < currentWord.length; i++) {
+          if(inputValue[i] == currentWord[i]) {
+            correct_let++;
+            total_let++;
+          } else {
+            total_let++;
+          }
+        }
       }
 
+    }
+
+    
+
+    if (this.state.seconds == 0) {
+      this.setState({
+        completed: true,
+
+        inputValue: "",
+        // completed: newWords.length === 0,
+
+      });
+
+      console.log(this.state.completed);
+      console.log('why');
     }
 
     this.calculateWPM();
@@ -315,15 +347,8 @@ class Example extends Component {
     const { startTime, completedWords } = this.state;
     const now = Date.now();
 
-    let diff = 0;
-    if (this.state.thirty) {
-      diff = (now - startTime) / 1000 / 30; // 1000 ms / 60 s
-    } else if (this.state.sixty) {
-      diff = (now - startTime) / 1000 / 60; // 1000 ms / 60 s
-    } else {
-      diff = (now - startTime) / 1000 / 90; // 1000 ms / 60 s
-    }
 
+    let diff = (now - startTime) / 1000 / 60; // 1000 ms / 60 s
 
     const wordsTyped = Math.ceil(
       completedWords.reduce((acc, word) => (acc += word.length), 0) / 5
@@ -367,25 +392,36 @@ class Example extends Component {
     if (!text) return <p>Loading...</p>;
 
     if (completed) {
-      console.log(this.state.time_stamps)
-      console.log(this.state.time_stamps[1][0])
       return (
         <div className="container">
           <h2>
             Your WPM is <strong>{wpm}</strong>
           </h2>
-          <button className="start-btn" onClick={() => this.setTime(30)}>
-            Play again
-          </button>
 
-          <Graph x_arr = {this.state.second_stamps.reverse()} y_arr = {this.state.time_stamps}></Graph>
+          <div className="frame">
+            <button class="custom-btn btn-5" onClick={() => this.setTime(30)}> <span> Start  </span></button>
+          </div>
+          <Graph x_arr={this.state.second_stamps.reverse()} y_arr={this.state.time_stamps} r_y={this.state.raw_arr}></Graph>
+          <div className="display">
+            <div className="wrap_head">
+              Statistics
+
+              <div className="wrap_stats">
+                What! {correct_let}, {total_let}
+                Letter Accuracy: {correct_let / total_let}
+              </div>
+              <div className="wrap_stats">
+                Correct Words: {this.state.correct_word} <br />
+                Accuracy: {this.state.correct_word / this.state.total_word}
+              </div>
+            </div>
+          </div>
         </div>
       );
     }
 
     return (
       <div>
-
         <div className="wpm">
           <strong>WPM: </strong>
           {wpm}
@@ -395,7 +431,6 @@ class Example extends Component {
         </div>
         <div className="container">
           <span className="display_time">{this.state.time.s} </span>
-
           {/* <button className="start-btn" onClick={() => this.test(30)}>
             30
           </button>
@@ -406,8 +441,8 @@ class Example extends Component {
             90
           </button> */}
           <div className="time_sets">
-          <span className={this.state.thirty ? 'active_time' : 'time_change'} onClick={() => this.setTime(5)} >
-              5s
+            <span className={this.state.thirty ? 'active_time' : 'time_change'} onClick={() => this.setTime(10)} >
+              10s
             </span>
 
             <span className={this.state.thirty ? 'active_time' : 'time_change'} onClick={() => this.setTime(30)} >
@@ -430,8 +465,6 @@ class Example extends Component {
                 let red = false;
                 // this means that the word is completed, so turn it green
                 if (completedWords.length > w_idx) {
-
-        
                   if (!word_arr[w_idx]) {
                     red = true;
                   }
