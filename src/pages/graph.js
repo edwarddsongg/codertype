@@ -11,6 +11,7 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
+import { getQueriesForElement } from "@testing-library/react";
 
 ChartJS.register(
     CategoryScale,
@@ -32,9 +33,10 @@ class Graph extends React.Component {
         
         const data = {
             labels: ret,
+            pointHoverBackgroundColor: "#742774",
             datasets: [
                 {
-                    label: 'what',
+                    label: 'WPM',
                     data: y,
                     fill: true,
                     backgroundColor: "rgba(75,192,192,0.2)",
