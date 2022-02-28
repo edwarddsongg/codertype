@@ -154,7 +154,7 @@ class Example extends Component {
     } else {
       this.setState({ ninety: true, sixty: false, thirty: false })
     }
-  
+
     this.setState({
       started: true,
       startTime: Date.now(),
@@ -216,12 +216,12 @@ class Example extends Component {
     if (seconds == 0) {
 
       if (input_word.trim() == current_word) {
-        correct_let+=current_word.length
-        total_let+=current_word.length
+        correct_let += current_word.length
+        total_let += current_word.length
       } else if (input_word.trim().length >= current_word.length) {
         console.log('hit')
-        for(let i = 0; i < current_word.length; i++) {
-          if(input_word[i] == current_word[i]) {
+        for (let i = 0; i < current_word.length; i++) {
+          if (input_word[i] == current_word[i]) {
             correct_let++;
             total_let++;
           } else {
@@ -229,14 +229,14 @@ class Example extends Component {
           }
         }
 
-        extra += input_word.trim().length - current_word.length 
+        extra += input_word.trim().length - current_word.length
       }
 
-      if(input_word.trim().length <= current_word) {
-        for(let i = 0; i < input_word.trim().length; i++) {
-          if(input_word[i]==current_word[i]) {
+      if (input_word.trim().length <= current_word) {
+        for (let i = 0; i < input_word.trim().length; i++) {
+          if (input_word[i] == current_word[i]) {
             correct_let++
-          } 
+          }
           total_let++
         }
       }
@@ -262,7 +262,7 @@ class Example extends Component {
         press_toggle: true
       });
       this.startTimer(this.state.seconds);
-      return 
+      return
     }
 
     const { words, completedWords } = this.state;
@@ -275,10 +275,10 @@ class Example extends Component {
       key_stroke: ++this.state.key_stroke
     });
 
-    
-    
+
+
     // console.log(currentWord, "currentWord");
-    
+
     // if space or '.', check the word
     if (lastLetter === " " || lastLetter === ".") {
       // check to see if it matches to the currentWord
@@ -287,7 +287,7 @@ class Example extends Component {
       // remove the word from the wordsArray
       // cleanUp the input
       const newWords = [...words.slice(1)];
-    
+
       if (inputValue.trim() == currentWord) {
         const newCompletedWords = [...completedWords, currentWord];
 
@@ -299,28 +299,16 @@ class Example extends Component {
 
         word_arr[index_track] = true;
         index_track++;
-        
-        if (inputValue.trim() == currentWord) {
-          correct_let+=currentWord.length
-          total_let+=currentWord.length
-        } else if (inputValue.trim().length >= currentWord.length) {
-          console.log('hit')
-          for(let i = 0; i < currentWord.length; i++) {
-            if(inputValue[i] == currentWord[i]) {
-              correct_let++;
-              total_let++;
-            } else {
-              total_let++;
-            }
-          }
-  
-          extra += inputValue.trim().length - currentWord.length 
-        }
+
+
+        correct_let += currentWord.length
+        total_let += currentWord.length
+
 
         this.setState({
           words: newWords,
           completedWords: newCompletedWords,
-          correct_word: this.state.correct + 1,
+          correct_word: this.state.correct_word + 1,
           total_word: this.state.total_word + 1,
           inputValue: "",
           // completed: newWords.length === 0,
@@ -336,6 +324,17 @@ class Example extends Component {
           (newCompletedWords.length /
             (newWords.length + newCompletedWords.length)) *
           100;
+        
+          for(let i = 0; i < currentWord.length; i++) {
+            if(inputValue[i] == currentWord[i]) {
+              correct_let++;
+              total_let++;
+            } else {
+              total_let++;
+            }
+          }
+  
+          extra += inputValue.trim().length - currentWord.length 
 
         this.setState({
           words: newWords,
