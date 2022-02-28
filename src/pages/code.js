@@ -7,9 +7,12 @@ import Graph from './graph'
 let word_arr = []
 let index_track = 0;
 let correct_let = 0;
+let extra = 0;
 let total_let = 0;
 let track = 0;
 let unique_key = 0;
+let current_word = ""
+let input_word = ""
 
 class Example extends Component {
   constructor(props) {
@@ -175,6 +178,7 @@ class Example extends Component {
     total_let = 0;
     correct_let = 0;
     track = 0;
+    extra = 0;
 
     this.state.seconds = time
     this.setText();
@@ -210,6 +214,32 @@ class Example extends Component {
     }
     // Check if we're at zero.
     if (seconds == 0) {
+
+      if (input_word.trim() == current_word) {
+        correct_let+=current_word.length
+        total_let+=current_word.length
+      } else if (input_word.trim().length >= current_word.length) {
+        console.log('hit')
+        for(let i = 0; i < current_word.length; i++) {
+          if(input_word[i] == current_word[i]) {
+            correct_let++;
+            total_let++;
+          } else {
+            total_let++;
+          }
+        }
+
+        extra += input_word.trim().length - current_word.length 
+      }
+
+      if(input_word.trim().length <= current_word) {
+        for(let i = 0; i < input_word.trim().length; i++) {
+          if(input_word[i]==current_word[i]) {
+            correct_let++
+          } 
+          total_let++
+        }
+      }
 
       clearInterval(this.timer);
       this.timer = 0;
@@ -270,6 +300,23 @@ class Example extends Component {
         word_arr[index_track] = true;
         index_track++;
         
+        if (inputValue.trim() == currentWord) {
+          correct_let+=currentWord.length
+          total_let+=currentWord.length
+        } else if (inputValue.trim().length >= currentWord.length) {
+          console.log('hit')
+          for(let i = 0; i < currentWord.length; i++) {
+            if(inputValue[i] == currentWord[i]) {
+              correct_let++;
+              total_let++;
+            } else {
+              total_let++;
+            }
+          }
+  
+          extra += inputValue.trim().length - currentWord.length 
+        }
+
         this.setState({
           words: newWords,
           completedWords: newCompletedWords,
@@ -308,37 +355,10 @@ class Example extends Component {
 
       });
 
-      if (inputValue.trim() == currentWord) {
-        correct_let+=currentWord.length
-        total_let+=currentWord.length
-      } else if (inputValue.trim().length >= currentWord.length) {
-        console.log('hit')
-        for(let i = 0; i < currentWord.length; i++) {
-          if(inputValue[i] == currentWord[i]) {
-            correct_let++;
-            total_let++;
-          } else {
-            total_let++;
-          }
-        }
-      }
-
     }
 
-    
-
-    if (this.state.seconds == 0) {
-      this.setState({
-        completed: true,
-
-        inputValue: "",
-        // completed: newWords.length === 0,
-
-      });
-
-      console.log(this.state.completed);
-      console.log('why');
-    }
+    current_word = currentWord
+    input_word = inputValue
 
     this.calculateWPM();
   };
@@ -409,6 +429,7 @@ class Example extends Component {
               <div className="wrap_stats">
                 What! {correct_let}, {total_let}
                 Letter Accuracy: {correct_let / total_let}
+                Extra: {extra}
               </div>
               <div className="wrap_stats">
                 Correct Words: {this.state.correct_word} <br />
