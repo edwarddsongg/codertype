@@ -408,7 +408,7 @@ class Example extends Component {
         </div>
       );
 
-    if (!text) return <p>Loading...</p>;
+    if (!text) return <p>Loading... </p>;
 
     if (completed) {
       return (
